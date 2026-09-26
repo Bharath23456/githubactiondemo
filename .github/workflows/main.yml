@@ -1,0 +1,45 @@
+name: CI/CD GitHub Actions Demo
+
+# 1. Triggers: Define what events start the pipeline
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: # Allows you to manually trigger the workflow from the UI
+
+# 2. Jobs: The automation blocks that run on virtual runners
+jobs:
+  
+  # Continuous Integration (CI) Job
+  continuous-integration:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Project Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests (CI)
+        run: npm test
+
+  # Continuous Deployment (CD) Job
+  continuous-deployment:
+    runs-on: ubuntu-latest
+    needs: continuous-integration # Only runs if the CI job finishes successfully
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Simulate Production Deployment (CD)
+        run: |
+          echo "Deploying application to production server..."
+          echo "Application successfully deployed!"
